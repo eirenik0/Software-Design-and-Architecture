@@ -1,0 +1,194 @@
+@startuml
+
+title SharingApp - Class Diagram | Serhii Khalymon
+
+class AppCompatActivity
+
+class MainActivity {
+    # void onCreate(Bundle savedInstanceState)
+    + void addItemActivity(View view)
+}
+AppCompatActivity <|-- MainActivity
+
+class EditItemActivity {
+    Editing a pre-existing item consists of 
+    deleting the old item and adding a new 
+    item with the old item's id.
+    ----
+    - ItemList item_list
+    - Item item
+    - Context context
+    - Bitmap image
+    - int REQUEST_CODE
+    - ImageView photo
+    - EditText title
+    - EditText maker
+    - EditText description
+    - EditText length
+    - EditText width
+    - EditText height
+    - EditText borrower
+    - TextView  borrower_tv
+    - Switch status
+    ----
+    # void onCreate(Bundle savedInstanceState)
+    + void addPhoto(View view)
+    + void deletePhoto(View view)
+}
+AppCompatActivity <|-- EditItemActivity
+
+class AddItemActivity{
+    Add a new item
+    ----
+    - EditText title
+    - EditText maker
+    - EditText description
+    - EditText length
+    - EditText width
+    - EditText height
+    ----
+    # void onCreate(Bundle savedInstanceState)
+    + void addPhoto(View view)
+    + void deletePhoto(View view)
+}
+AppCompatActivity <|-- AddItemActivity
+
+''''''''''''''
+
+class Fragment
+class FragmentPagerAdapter
+
+class SectionsPagerAdapter {
+    + constructor(FragmentManager fm)
+    + Fragment getItem(int position)
+    + int getCount()
+    + CharSequence getPageTitle(int position)
+}
+FragmentPagerAdapter <|-- SectionsPagerAdapter
+Fragment -- SectionsPagerAdapter
+
+
+''''''''''''''''''''''''
+
+class Dimensions {
+    - String length
+    - String width
+    - String height
+    ----
+    + String getLength()
+    + String getWidth()
+    + String getHeight()
+}
+
+class Item {
+    - String title
+    - String maker
+    - String description
+    - Dimmensions dimmensions
+    - String status
+    - String borrower
+    # Bitmap image
+    # Bitmap image_base64
+    - String id
+    ----
+    + constructor(title, maker, 
+       description, dimensions, image, id)
+    + String getId()
+    + void setId()
+    + void updateId(String id)
+    + void setTitle(String title)
+    + String getTitle()
+    + String getMaker()
+    + String getDescription()
+    + void setDescription(String description)
+    + void setDimensions(Dimensions dimensions)
+    + Dimensions getDimensions()
+    + void setStatus(String status)
+    + String getStatus()
+    + void setBorrower(String borrower)
+    + String getBorrower()
+    + void addImage(Bitmap new_image)
+    + Bitmap getImage()
+}
+Dimensions "1" --* Item
+EditItemActivity *-- Item
+
+class ItemList {
+    {static} ArrayList<Item> items
+    - String FILENAME
+    ----
+    + void setItems(ArrayList<Item> item_list)
+    + ArrayList<Item> getItems()
+    + void addItem(Item item)
+    + void deleteItem(Item item)
+    + Item getItem(int index)
+    + int getIndex(Item item)
+    + int getSize()
+    + void loadItems(Context context)
+    + void saveItems(Context context)
+    + ArrayList<Item> filterItemsByStatus(String status)
+}
+AddItemActivity *-- ItemList
+EditItemActivity *-- ItemList
+ItemList "1" o-- "1..n" Item
+
+'''''''''''''''
+
+class ArrayAdapter
+class ItemAdapter {
+    - LayoutInflater inflater
+    - Fragment fragment
+    - Context context
+    ----
+    + View getView(position, 
+       convertView, parent)
+}
+ArrayAdapter  <|-- ItemAdapter
+ItemAdapter o-- Fragment
+ItemAdapter "1" o-- "1..n" Item
+
+class ItemsFragment {
+    - ListView list_view
+    - ArrayAdapter<Item> adapter
+    - ArrayList<Item> selected_items
+    - LayoutInflater inflater
+    - ViewGroup container
+    - Context context
+    ----
+    + View onCreateView(inflater,
+       container,savedInstanceState)
+    + void setVariables(int resource, int id )
+    + void setAdapter(Fragment fragment)
+    {abstract} + ArrayList<Item> filterItems()
+}
+Fragment <|-- ItemsFragment
+ItemsFragment "1" o-- "1..n" Item
+
+class BorrowedItemsFragment {
+    + View onCreateView(inflater, 
+            container, savedInstanceState)
+    + ArrayList<Item> filterItems()
+}   
+ItemsFragment <|-- BorrowedItemsFragment
+
+class AvailableItemsFragment {
+    Displays a list of all "Available" items
+    ----
+    + View onCreateView(inflater, 
+            container, savedInstanceState)
+    + ArrayList<Item> filterItems()
+
+}
+ItemsFragment <|-- AvailableItemsFragment
+
+class AllItemsFragment {
+    Displays a list of all items
+    ----
+    + View onCreateView(inflater, 
+            container, savedInstanceState)
+    + ArrayList<Item> filterItems()
+
+}
+ItemsFragment <|-- AllItemsFragment
+
+@enduml
