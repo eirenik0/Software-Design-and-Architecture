@@ -1,0 +1,30 @@
+@startuml
+left to right direction
+
+title Images state diagram | Serhii Khalymon
+
+state "Available without photo" as A : status\nimage\nborrower
+state "Available with photo" as AP : status\nimage\nborrower
+state "Borrowed with photo" as B : status\nimage\nborrower
+state "Borrowed without photo" as BP : status\nimage\nborrower
+
+[*] --> A
+' Add image/Set image
+A --> AP : Add/Set image
+AP --> A : Delete/Clear image
+B --> BP : Add/Set image
+BP --> B : Delete/Clear image
+
+'
+A --> B : Toggle status/\nSet name borrower
+B --> A : Toggle status/\nClear name borrower
+AP --> BP : Toggle status/\nSet name borrower
+BP --> AP : Toggle status/\nClear name borrower
+
+' Delete item
+A --> [*] : Delete item
+AP --> [*] : Delete item
+B --> [*] : Delete item
+BP --> [*] : Delete item
+
+@enduml
