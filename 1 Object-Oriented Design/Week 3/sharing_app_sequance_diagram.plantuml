@@ -1,0 +1,37 @@
+@startuml
+
+title "Sharing App Sequence Diagram | Serhii Khalymon"
+
+actor Actor
+participant ":AddItemActivity" as AddItemActivity
+participant ":ItemList" as ItemList
+participant ":Dimensions" as Dimensions
+participant ":Item" as Item
+
+Actor -> AddItemActivity : onCreate()
+activate AddItemActivity
+AddItemActivity -> ItemList : loadItems()
+activate ItemList
+AddItemActivity <-- ItemList : item_list added
+deactivate ItemList
+deactivate AddItemActivity
+
+Actor -> AddItemActivity : saveItem()
+activate AddItemActivity
+AddItemActivity -> Dimensions : new Dimensions(length_str, width_str, height_str)
+activate Dimensions
+AddItemActivity <-- Dimensions : dimension
+deactivate Dimensions
+AddItemActivity -> Item : new Item(title_str, maker_str, description_str, dimensions, image, null )
+activate Item
+AddItemActivity <-- Item : item
+deactivate Item
+AddItemActivity -> ItemList : addItem(item)
+activate ItemList
+AddItemActivity <-- ItemList : item_list added
+AddItemActivity -> ItemList : saveItems(context)
+AddItemActivity <-- ItemList : context saved
+deactivate ItemList
+deactivate AddItemActivity
+
+@enduml
