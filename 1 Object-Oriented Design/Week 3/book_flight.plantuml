@@ -1,0 +1,84 @@
+@startuml
+
+title "Book flight on North American airports | Serhii Khalymon"
+
+actor Customer
+boundary GUI
+control SearchTicket
+control TicketCart
+control Payment
+database FlightCompanyDatabase as DB
+
+' Select required destination and location
+Customer ->  GUI : Open booking app
+activate GUI
+GUI -> SearchTicket: Fetch related data
+activate SearchTicket
+SearchTicket -> DB : Retrieve related data
+activate DB
+DB --> SearchTicket : Destination and location data
+deactivate DB
+SearchTicket --> GUI : Preload available data
+deactivate SearchTicket
+Customer -> GUI : Select desired location
+GUI --> Customer : Desired location displayed
+Customer -> GUI : Select departure/arrival time
+GUI --> Customer : Desired time displayed
+deactivate GUI
+
+' Search required flights
+Customer -> GUI : Click search btn
+activate GUI
+GUI -> SearchTicket : Search available tickets
+activate SearchTicket
+SearchTicket -> DB : Retrieve tickets data
+activate DB
+SearchTicket <-- DB: Ticket
+deactivate DB
+SearchTicket --> GUI : Return available tickets
+deactivate SearchTicket
+
+''''''''' Search process
+GUI -> Customer : Show available tickets
+deactivate GUI
+Customer -> GUI: Click add ticket to cart btn
+activate GUI
+GUI -> TicketCart: Book flight
+
+''''''''' Booking process
+activate TicketCart
+TicketCart -> DB: Create reserved ticket
+activate DB
+DB --> TicketCart : Reserved ticket created
+deactivate DB
+TicketCart --> GUI: Ticket
+deactivate TicketCart
+GUI --> Customer: Show cart with reserved ticket
+deactivate GUI
+
+''''''''' Payment process
+''''''''''''' Validate card
+Customer -> GUI : Pay for booking
+activate GUI
+GUI -> Payment: Enter card information
+activate Payment
+Payment -> Payment : Validate card info
+Payment --> GUI : Allow to make a payment
+deactivate Payment
+GUI --> Customer : Activate payment btn
+
+''''''''''''' Pay
+Customer -> GUI : Click payment btn
+GUI -> Payment : Process payment
+activate Payment
+Payment -> Payment : Check payment
+Payment -> DB : Activate reversed ticket
+activate DB
+DB --> Payment : Ticket activated
+deactivate DB
+Payment --> GUI : Booked ticket information
+deactivate Payment
+GUI --> Customer : Booking confirmed
+deactivate GUI
+
+@enduml
