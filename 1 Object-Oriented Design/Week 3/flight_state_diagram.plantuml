@@ -1,0 +1,20 @@
+@startuml
+
+title "Flight on North American airports \nstate diagram | Serhii Khalymon"
+
+state Unassigned
+state Assigned : Assign plane to flight
+state "An route" as Route : Plane in air
+state Landed
+state Maintenance
+
+[*] --> Unassigned
+Unassigned --> Assigned : Assign plane
+Assigned --> Route : Take off
+Route --> Landed : Destination reached
+Landed --> Maintenance : Maintenance required
+Maintenance --> Unassigned : Maintenance done
+Unassigned --> Maintenance : Needs repair
+Maintenance --> [*] : Plane is not repairable
+
+@enduml
